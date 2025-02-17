@@ -41,66 +41,32 @@ function ccab_clear_cache() {
     }
 
     // Clear the Beaver Builder cache
-    if ( class_exists( 'FLBuilderModel' ) ) {
+    $cache_dir = wp_upload_dir()['basedir'] . '/bb-plugin/cache';
+    if ( is_dir( $cache_dir ) ) {
         try {
-            if ( method_exists( 'FLBuilderModel', 'delete_all_asset_cache' ) ) {
-                FLBuilderModel::delete_all_asset_cache();
-                error_log( 'FLBuilderModel::delete_all_asset_cache() called successfully.' );
-            } else {
-                error_log( 'Method delete_all_asset_cache does not exist in FLBuilderModel.' );
-            }
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator( $cache_dir, RecursiveDirectoryIterator::SKIP_DOTS ),
+                RecursiveIteratorIterator::CHILD_FIRST
+            );
 
-            if ( method_exists( 'FLBuilderModel', 'delete_all_transients' ) ) {
-                FLBuilderModel::delete_all_transients();
-                error_log( 'FLBuilderModel::delete_all_transients() called successfully.' );
-            } else {
-                error_log( 'Method delete_all_transients does not exist in FLBuilderModel.' );
-            }
-
-            if ( method_exists( 'FLBuilderModel', 'delete_all_css' ) ) {
-                FLBuilderModel::delete_all_css();
-                error_log( 'FLBuilderModel::delete_all_css() called successfully.' );
-            } else {
-                error_log( 'Method delete_all_css does not exist in FLBuilderModel.' );
-            }
-
-            if ( method_exists( 'FLBuilderModel', 'delete_all_js' ) ) {
-                FLBuilderModel::delete_all_js();
-                error_log( 'FLBuilderModel::delete_all_js() called successfully.' );
-            } else {
-                error_log( 'Method delete_all_js does not exist in FLBuilderModel.' );
-            }
-
-            if ( method_exists( 'FLBuilderModel', 'delete_all_cache' ) ) {
-                FLBuilderModel::delete_all_cache();
-                error_log( 'FLBuilderModel::delete_all_cache() called successfully.' );
-            } else {
-                error_log( 'Method delete_all_cache does not exist in FLBuilderModel.' );
-            }
-
-            // Delete the cache directory
-            $cache_dir = FLBuilderModel::get_cache_dir();
-            if ( is_dir( $cache_dir['path'] ) ) {
-                $files = glob( $cache_dir['path'] . '/*' );
-                foreach ( $files as $file ) {
-                    if ( is_file( $file ) ) {
-                        unlink( $file );
-                    }
+            foreach ( $files as $fileinfo ) {
+                if ( $fileinfo->isFile() || $fileinfo->isLink() ) {
+                    unlink( $fileinfo->getRealPath() );
+                } elseif ( $fileinfo->isDir() ) {
+                    rmdir( $fileinfo->getRealPath() );
                 }
-                error_log( 'Beaver Builder cache directory cleared successfully.' );
-            } else {
-                error_log( 'Beaver Builder cache directory does not exist.' );
             }
+
+            error_log( 'Beaver Builder cache directory contents cleared successfully.' );
 
             add_action( 'admin_notices', 'ccab_cache_cleared_notice' );
-            error_log( 'Beaver Builder cache cleared successfully.' );
         } catch ( Exception $e ) {
             error_log( 'Error clearing Beaver Builder cache: ' . $e->getMessage() );
             wp_die( __( 'An error occurred while clearing the cache.', 'clear-cache-admin-bar' ) );
         }
     } else {
-        error_log( 'FLBuilderModel class does not exist.' );
-        wp_die( __( 'Beaver Builder is not installed or activated.', 'clear-cache-admin-bar' ) );
+        error_log( 'Beaver Builder cache directory does not exist.' );
+        wp_die( __( 'Beaver Builder cache directory does not exist.', 'clear-cache-admin-bar' ) );
     }
 
     // Redirect to the current page
