@@ -2,7 +2,7 @@
 /*
 Plugin Name: Clear the Beaver Builder Cache
 Description: Adds a "Clear Cache" button to the WordPress admin bar.
-Version: 1.0
+Version: 1.1
 Author: The Mighty Mo! Design Co.
 Author URL: https://www.themightymo.com
 Creation Date: Dec. 1, 2024
@@ -45,6 +45,7 @@ function ccab_clear_cache() {
         FLBuilderModel::delete_asset_cache();
     }
 
-    wp_redirect( admin_url() );
+    // Redirect to the current page
+    wp_redirect( wp_get_referer() );
     exit;
 }
