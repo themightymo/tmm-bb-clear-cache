@@ -8,7 +8,6 @@ Author URL: https://www.themightymo.com
 Creation Date: Dec. 1, 2024
 GitHub Branch: main
 GitHub Plugin URI: themightymo/tmm-bb-clear-cache
-GitHub Plugin URI: https://github.com/themightymo/tmm-bb-clear-cache
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
