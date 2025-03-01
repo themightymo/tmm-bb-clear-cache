@@ -6,6 +6,8 @@ Version: 1.3
 Author: The Mighty Mo! Design Co.
 Author URL: https://www.themightymo.com
 Creation Date: Dec. 1, 2024
+GitHub Branch: main
+GitHub Plugin URI: https://github.com/themightymo/tmm-bb-clear-cache
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
